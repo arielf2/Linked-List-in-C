@@ -16,7 +16,7 @@ Node* SearchForElement(Node* head, int value, int print_index);
 
 void PrintList(Node* head);
 
-int RemoveIndex(Node* head, int index);
+int RemoveIndex(Node** head, int index);
 
 void TerminateList(Node* head);
 

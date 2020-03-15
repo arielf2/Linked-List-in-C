@@ -5,10 +5,10 @@
 
 Node* CreateNewNode(int value);
 
-int RemoveIndex(Node* head, int index_to_remove) {
+int RemoveIndex(Node** head, int index_to_remove) {
 	int found = 0, index = 0;
 	Node* previous_node = NULL;
-	Node* current_node = head;
+	Node* current_node = *head;
 	while (current_node != NULL) {
 		if (index_to_remove == index){
 			found = 1;
@@ -21,12 +21,13 @@ int RemoveIndex(Node* head, int index_to_remove) {
 	if (found) {
 		if (previous_node != NULL) {
 			previous_node->next_node = current_node->next_node;
+			free(current_node);
 		}
-		else {
+		else { // remove head of list
 			Node* tmp = current_node;
-			head = current_node->next_node;
+			*head = tmp->next_node;
+			//head = current_node->next_node;
 			free(tmp);
-
 
 			//*head = *current_node->next_node; Ver1
 		}

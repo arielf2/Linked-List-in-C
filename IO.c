@@ -51,7 +51,7 @@ int WhichCommand(Node** start, int num_of_args, char* command, int arg1, int arg
 		SearchForElement(*start, arg1, 1);
 	}
 	else if (strcmp(command, "del") == 0) {
-		return RemoveIndex(*start, arg1);
+		return RemoveIndex(start, arg1);
 	}
 	else if (strcmp(command, "print") == 0) {
 		PrintList(*start);
