@@ -9,6 +9,7 @@ int RemoveIndex(Node** head, int index_to_remove) {
 	int found = 0, index = 0;
 	Node* previous_node = NULL;
 	Node* current_node = *head;
+
 	while (current_node != NULL) {
 		if (index_to_remove == index){
 			found = 1;
@@ -21,17 +22,12 @@ int RemoveIndex(Node** head, int index_to_remove) {
 	if (found) {
 		if (previous_node != NULL) {
 			previous_node->next_node = current_node->next_node;
-			free(current_node);
 		}
-		else { // remove head of list
-			Node* tmp = current_node;
-			*head = tmp->next_node;
-			//head = current_node->next_node;
-			free(tmp);
+		else { // special case - remove head of list
+			*head = current_node->next_node;
 
-			//*head = *current_node->next_node; Ver1
 		}
-		//free(current_node); Ver 1 - works without freeing mem
+		free(current_node);
 		return 0;
 	}
 	else {
@@ -53,13 +49,10 @@ void TerminateList(Node* head)
 	}
 
 }
-	
-
 
 void InsertEndOfList(Node** head, int value) {
 
 	if (NULL == *head) {
-		printf("List is empty. Creating..\n");
 		*head = CreateNewNode(value);
 	}
 	else {
@@ -74,7 +67,6 @@ void InsertEndOfList(Node** head, int value) {
 
 void InsertStartOfList(Node** head, int value) {
 	if (NULL == *head) {
-		printf("List is empty. Creating..\n");
 		*head = CreateNewNode(value);
 	}
 
@@ -114,7 +106,7 @@ Node* SearchForElement(Node* head, int value, int print_index) {
 
 	if (print_index) {
 		if (found) printf("%d\n", index);
-		else printf("-1\n");
+		else printf("%d\n", ERROR_ELEM_NOT_FOUND);
 		return NULL;
 	}
 	else {
