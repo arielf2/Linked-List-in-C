@@ -2,10 +2,29 @@
 #include <stdio.h>
 #include "LinkedList.h"
 
+#define ERROR_INDEX_NOT_FOUND -1
+#define SUCCESS 0
+#define ERROR 1
+
+/*  Note to grader:
+	RemoveIndex and SearchForElement perform similar operations,
+	yet they are still 2 different functions because they have
+	a fundamental difference - RemoveIndex has to keep track of
+	2 nodes during traversal of linked list, and SearchForElement
+	has to keep track of only one node. I could not find a way to
+	have both features under a single function while keeping our
+	coding conventions, therefore I have two similar (albeit not identical)
+	functions */
+
+
+void InitalizeLinkedList(Node** head, int value);
+
+int IsEmptyList(Node* head);
 
 Node* CreateNewNode(int value);
 
 int RemoveIndex(Node** head, int index_to_remove) {
+
 	int found = 0, index = 0;
 	Node* previous_node = NULL;
 	Node* current_node = *head;
@@ -25,16 +44,14 @@ int RemoveIndex(Node** head, int index_to_remove) {
 		}
 		else { // special case - remove head of list
 			*head = current_node->next_node;
-
 		}
 		free(current_node);
-		return 0;
+		return SUCCESS;
 	}
 	else {
-		printf("Error: index %d too large\n", index_to_remove);
-		return 1;
+		printf("Error: index %d exceeds size of linked list\n", index_to_remove);
+		return ERROR;
 	}
-
 }
 
 void TerminateList(Node* head)
@@ -50,10 +67,19 @@ void TerminateList(Node* head)
 
 }
 
+void InitalizeLinkedList(Node** head, int value) {
+	*head = CreateNewNode(value);
+}
+
+int IsEmptyList(Node* head) {
+	if (NULL == head) return 1;
+	else return 0;
+}
+
 void InsertEndOfList(Node** head, int value) {
 
-	if (NULL == *head) {
-		*head = CreateNewNode(value);
+	if (IsEmptyList(*head)) {
+		InitalizeLinkedList(head, value);
 	}
 	else {
 		Node* current_node = *head;
@@ -66,8 +92,9 @@ void InsertEndOfList(Node** head, int value) {
 }
 
 void InsertStartOfList(Node** head, int value) {
-	if (NULL == *head) {
-		*head = CreateNewNode(value);
+
+	if (IsEmptyList(*head)) {
+		InitalizeLinkedList(head, value);
 	}
 
 	else {
@@ -87,7 +114,7 @@ int InsertAfterElement(Node** head, int new_element, int element_before_new) {
 	}
 	else {
 		printf("Error: element %d not found\n", element_before_new);
-		return 1;
+		return ERROR;
 	}
 	
 }
@@ -106,7 +133,7 @@ Node* SearchForElement(Node* head, int value, int print_index) {
 
 	if (print_index) {
 		if (found) printf("%d\n", index);
-		else printf("%d\n", ERROR_ELEM_NOT_FOUND);
+		else printf("%d\n", ERROR_INDEX_NOT_FOUND);
 		return NULL;
 	}
 	else {

@@ -1,8 +1,7 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
-#define ERROR_ELEM_NOT_FOUND -1
-#define SUCCESS 0
+
 
 
 typedef struct LinkedListNode {
