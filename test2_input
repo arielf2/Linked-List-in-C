@@ -21,4 +21,10 @@ del 0
 print
 add_after 12 9
 print
+add_end -4
+print
+index 12
+print
+add_after 12 12
+print
 exit

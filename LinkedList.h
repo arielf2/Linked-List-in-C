@@ -1,13 +1,11 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
-
-
-
 typedef struct LinkedListNode {
 	int value;
 	struct LinkedListNode* next_node;
 } Node;
+
 
 void InsertEndOfList(Node** head, int value);
 

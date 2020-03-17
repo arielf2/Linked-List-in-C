@@ -23,58 +23,27 @@ int IsEmptyList(Node* head);
 
 Node* CreateNewNode(int value);
 
-int RemoveIndex(Node** head, int index_to_remove) {
-
-	int found = 0, index = 0;
-	Node* previous_node = NULL;
-	Node* current_node = *head;
-
-	while (current_node != NULL) {
-		if (index_to_remove == index){
-			found = 1;
-			break;
-		}
-		previous_node = current_node;
-		current_node = current_node->next_node;
-		index++;
-	}
-	if (found) {
-		if (previous_node != NULL) {
-			previous_node->next_node = current_node->next_node;
-		}
-		else { // special case - remove head of list
-			*head = current_node->next_node;
-		}
-		free(current_node);
-		return SUCCESS;
-	}
-	else {
-		printf("Error: index %d exceeds size of linked list\n", index_to_remove);
-		return ERROR;
-	}
-}
-
-void TerminateList(Node* head)
-{
-	Node* temp_node_pointer;
-
-	while (head != NULL)
-	{
-		temp_node_pointer = head;
-		head = head->next_node;
-		free(temp_node_pointer);
-	}
-
-}
 
 void InitalizeLinkedList(Node** head, int value) {
 	*head = CreateNewNode(value);
+}
+
+Node* CreateNewNode(int value) {
+
+	Node* new_node = (Node*)malloc(sizeof(Node));
+	if (new_node == NULL) {
+		exit(1);
+	}
+	new_node->value = value;
+	new_node->next_node = NULL;
+	return new_node;
 }
 
 int IsEmptyList(Node* head) {
 	if (NULL == head) return 1;
 	else return 0;
 }
+
 
 void InsertEndOfList(Node** head, int value) {
 
@@ -142,17 +111,6 @@ Node* SearchForElement(Node* head, int value, int print_index) {
 	}
 }
 
-Node* CreateNewNode(int value) {
-
-	Node* new_node = (Node*)malloc(sizeof(Node));
-	if (new_node == NULL) {
-		exit(1);
-	}
-	new_node->value = value;
-	new_node->next_node = NULL;
-	return new_node;
-	}
-
 void PrintList(Node* head) {
 
 	if (NULL == head) {
@@ -167,4 +125,49 @@ void PrintList(Node* head) {
 	}
 	printf("%d]\n", current_node->value);
 }
+
+int RemoveIndex(Node** head, int index_to_remove) {
+
+	int found = 0, index = 0;
+	Node* previous_node = NULL;
+	Node* current_node = *head;
+
+	while (current_node != NULL) {
+		if (index_to_remove == index) {
+			found = 1;
+			break;
+		}
+		previous_node = current_node;
+		current_node = current_node->next_node;
+		index++;
+	}
+	if (found) {
+		if (previous_node != NULL) {
+			previous_node->next_node = current_node->next_node;
+		}
+		else { // special case - remove head of list
+			*head = current_node->next_node;
+		}
+		free(current_node);
+		return SUCCESS;
+	}
+	else {
+		printf("Error: index %d exceeds size of linked list\n", index_to_remove);
+		return ERROR;
+	}
+}
+
+void TerminateList(Node* head)
+{
+	Node* temp_node_pointer;
+
+	while (head != NULL)
+	{
+		temp_node_pointer = head;
+		head = head->next_node;
+		free(temp_node_pointer);
+	}
+
+}
+
 

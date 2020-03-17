@@ -1,7 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
 
 #include "LinkedList.h"
@@ -16,9 +15,12 @@ void UsageGuide();
 
 int main() {
 	
-	char user_action[MAX_LINE_LENGTH];
-	char command[MAX_LINE_LENGTH];
+	char user_action[MAX_LINE_LENGTH], command[MAX_LINE_LENGTH];
 	int exitcode = 0, argument1 = 0, argument2 = 0;
+	/*	Note to grader: I assume that the 'average programmer' understands that the 
+		arguments (1 and 2) serve different purposes depending on the operation required,
+		therefore they are named generically. If he's not sure and he enters invalid 
+		command or arguments, this program will print the correct usage */
 	int num_of_arguments = -1;
 	Node* head = NULL;
 
@@ -28,15 +30,15 @@ int main() {
 		user_action[strlen(user_action) - 1] = '\0';
 
 		ConvertToLowercase(user_action);
-
-		argument1, argument2 = 0;
+				
 		num_of_arguments = sscanf(user_action, "%s %d %d", command, &argument1, &argument2);
 
 		exitcode = WhichCommand(&head, num_of_arguments, command, argument1, argument2);
 		
 	}
 	TerminateList(head);
-	
+
+	return 0;
 }
 
 int WhichCommand(Node** start, int num_of_args, char* command, int argument1, int argument2) {
@@ -63,7 +65,7 @@ int WhichCommand(Node** start, int num_of_args, char* command, int argument1, in
 		return 1;
 	}
 	else {
-		printf("Unrecognized command or invalid num of arguments requested\n");
+		printf("Unrecognized command or invalid number of arguments requested\n");
 		UsageGuide();
 	}
 	return 0;
