@@ -6,8 +6,17 @@
 #include "LinkedList.h"
 
 #define MAX_LINE_LENGTH 100
+#define NUM_OF_ARGS_O 1
+#define NUM_OF_ARGS_T 2
+#define NUM_OF_ARGS_TH 3
 
-int WhichCommand(Node** head, int num_of_args, char* command, int argument1, int argument2);
+#define STRINGS_ARE_EQUAL( Str1, Str2 ) ( strcmp( (Str1), (Str2) ) == 0 )
+
+void GetUserInput(char* destination);
+
+int ParseUserInput(char* user_input, char* command, int* argument1, int* argument2);
+
+int DoCommand(Node** head, int num_of_args, char* command, int argument1, int argument2);
 
 void ConvertToLowercase(char* str);
 
@@ -26,14 +35,18 @@ int main() {
 
 	while (exitcode == 0) {
 
-		fgets(user_action, MAX_LINE_LENGTH, stdin);
-		user_action[strlen(user_action) - 1] = '\0';
 
-		ConvertToLowercase(user_action);
-				
-		num_of_arguments = sscanf(user_action, "%s %d %d", command, &argument1, &argument2);
+		GetUserInput(user_action);
 
-		exitcode = WhichCommand(&head, num_of_arguments, command, argument1, argument2);
+		//fgets(user_action, MAX_LINE_LENGTH, stdin);
+
+		//user_action[strlen(user_action) - 1] = '\0';
+		//ConvertToLowercase(user_action);
+
+		num_of_arguments = ParseUserInput(user_action, command, &argument1, &argument2);
+
+
+		exitcode = DoCommand(&head, num_of_arguments, command, argument1, argument2);
 		
 	}
 	TerminateList(head);
@@ -41,27 +54,44 @@ int main() {
 	return 0;
 }
 
-int WhichCommand(Node** start, int num_of_args, char* command, int argument1, int argument2) {
+void GetUserInput(char* destination)
+{
+	fgets(destination, MAX_LINE_LENGTH, stdin);
+}
 
-	if (strcmp(command, "add_end") == 0 && num_of_args == 2) {
+int ParseUserInput(char* user_input, char* command, int* argument1, int* argument2)
+{
+	user_input[strlen(user_input) - 1] = '\0';
+
+	ConvertToLowercase(user_input);
+
+	int num_of_arguments = sscanf(user_input, "%s %d %d", command, argument1, argument2) - 1;
+	// don't count the command itself as an argument - therefore minus 1
+
+	return num_of_arguments;
+}
+
+int DoCommand(Node** start, int num_of_args, char* command, int argument1, int argument2) {
+
+	if (STRINGS_ARE_EQUAL(command, "add_end") && num_of_args == 1) {
 		InsertEndOfList(start, argument1);
 	}
-	else if (strcmp(command, "add_start") == 0 && num_of_args == 2) {
+	else if (STRINGS_ARE_EQUAL(command, "add_start") && num_of_args == 1) {
 		InsertStartOfList(start, argument1);
 	}
-	else if (strcmp(command, "add_after") == 0 && num_of_args == 3) {
+	else if (STRINGS_ARE_EQUAL(command, "add_after") && num_of_args == 2) {
 		return InsertAfterElement(start, argument1, argument2);
 	}
-	else if (strcmp(command, "index") == 0 && num_of_args == 2) {
+	else if (STRINGS_ARE_EQUAL(command, "index") && num_of_args == 1) {
 		SearchForElement(*start, argument1, 1);
 	}
-	else if (strcmp(command, "del") == 0 && num_of_args == 2) {
+	else if (STRINGS_ARE_EQUAL(command, "del") && num_of_args == 1) {
 		return RemoveIndex(start, argument1);
 	}
-	else if (strcmp(command, "print") == 0 && num_of_args == 1) {
+	else if (STRINGS_ARE_EQUAL(command, "print") && num_of_args == 0) {
 		PrintList(*start);
 	}
-	else if (strcmp(command, "exit") == 0 && num_of_args == 1) {
+	else if (STRINGS_ARE_EQUAL(command, "exit") && num_of_args == 0) {
 		return 1;
 	}
 	else {
