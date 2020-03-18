@@ -6,9 +6,6 @@
 #include "LinkedList.h"
 
 #define MAX_LINE_LENGTH 100
-#define NUM_OF_ARGS_O 1
-#define NUM_OF_ARGS_T 2
-#define NUM_OF_ARGS_TH 3
 
 #define STRINGS_ARE_EQUAL( Str1, Str2 ) ( strcmp( (Str1), (Str2) ) == 0 )
 
@@ -35,16 +32,9 @@ int main() {
 
 	while (exitcode == 0) {
 
-
 		GetUserInput(user_action);
 
-		//fgets(user_action, MAX_LINE_LENGTH, stdin);
-
-		//user_action[strlen(user_action) - 1] = '\0';
-		//ConvertToLowercase(user_action);
-
 		num_of_arguments = ParseUserInput(user_action, command, &argument1, &argument2);
-
 
 		exitcode = DoCommand(&head, num_of_arguments, command, argument1, argument2);
 		
