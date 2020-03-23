@@ -1,6 +1,8 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
+#include <stdbool.h>
+
 typedef struct LinkedListNode {
 	int value;
 	struct LinkedListNode* next_node;
@@ -13,7 +15,7 @@ void InsertStartOfList(Node** head, int value);
 
 int InsertAfterElement(Node** head, int new_elemenet, int element_before_new);
 
-Node* SearchForElement(Node* head, int value, int print_index);
+Node* SearchForElement(Node* head, int value, bool print_index);
 
 void PrintList(Node* head);
 

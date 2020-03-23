@@ -9,11 +9,18 @@
 
 #define STRINGS_ARE_EQUAL( Str1, Str2 ) ( strcmp( (Str1), (Str2) ) == 0 )
 
+typedef struct user_instruction {
+	char command[MAX_LINE_LENGTH];
+	int argument_1;
+	int argument_2;
+} instruction;
+
+
 void GetUserInput(char* destination);
 
-int ParseUserInput(char* user_input, char* command, int* argument1, int* argument2);
+int ParseUserInput(char* user_input, instruction* user_instruction);
 
-int DoCommand(Node** head, int num_of_args, char* command, int argument1, int argument2);
+bool DoCommand(Node** head, instruction* user_instruction);
 
 void ConvertToLowercase(char* str);
 
@@ -21,22 +28,22 @@ void UsageGuide();
 
 int main() {
 	
-	char user_action[MAX_LINE_LENGTH], command[MAX_LINE_LENGTH];
-	int exitcode = 0, argument1 = 0, argument2 = 0;
-	/*	Note to grader: I assume that the 'average programmer' understands that the 
-		arguments (1 and 2) serve different purposes depending on the operation required,
-		therefore they are named generically. If he's not sure and he enters invalid 
-		command or arguments, this program will print the correct usage */
-	int num_of_arguments = -1;
+	char user_input[MAX_LINE_LENGTH];	
 	Node* head = NULL;
+	bool stop_input_loop = false;
 
-	while (exitcode == 0) {
+	instruction user_instruction;
 
-		GetUserInput(user_action);
+	while (!stop_input_loop) {
 
-		num_of_arguments = ParseUserInput(user_action, command, &argument1, &argument2);
+		GetUserInput(user_input);
 
-		exitcode = DoCommand(&head, num_of_arguments, command, argument1, argument2);
+		int num_of_arguments = ParseUserInput(user_input, &user_instruction);
+		if (num_of_arguments == -1) {
+			printf("Empty string received\n");
+			break;
+		}
+		stop_input_loop = DoCommand(&head, &user_instruction);
 		
 	}
 	TerminateList(head);
@@ -49,46 +56,59 @@ void GetUserInput(char* destination)
 	fgets(destination, MAX_LINE_LENGTH, stdin);
 }
 
-int ParseUserInput(char* user_input, char* command, int* argument1, int* argument2)
-{
-	user_input[strlen(user_input) - 1] = '\0';
+void RemoveTrailingNewline(char* string) {
+	int last_character_position = strlen(string) - 1;
+		if (string[last_character_position] == '\n') {
+			string[last_character_position] = '\0';
+	}
+
+}
+int ParseUserInput(char* user_input, instruction* user_instruction) {
+
+	RemoveTrailingNewline(user_input);
 
 	ConvertToLowercase(user_input);
 
-	int num_of_arguments = sscanf(user_input, "%s %d %d", command, argument1, argument2) - 1;
-	// don't count the command itself as an argument - therefore minus 1
+	int num_of_arguments = sscanf(user_input, "%s %d %d",
+		user_instruction->command,
+		&user_instruction->argument_1,
+		&user_instruction->argument_2);
 
 	return num_of_arguments;
 }
 
-int DoCommand(Node** start, int num_of_args, char* command, int argument1, int argument2) {
 
-	if (STRINGS_ARE_EQUAL(command, "add_end") && num_of_args == 1) {
-		InsertEndOfList(start, argument1);
+
+bool DoCommand(Node** start, instruction* user_instruction) {
+	bool got_exit_indication = false;
+	if (STRINGS_ARE_EQUAL(user_instruction->command, "add_end")){
+		InsertEndOfList(start, user_instruction->argument_1);
 	}
-	else if (STRINGS_ARE_EQUAL(command, "add_start") && num_of_args == 1) {
-		InsertStartOfList(start, argument1);
+	else if (STRINGS_ARE_EQUAL(user_instruction->command, "add_start")) {
+		InsertStartOfList(start, user_instruction->argument_1);
 	}
-	else if (STRINGS_ARE_EQUAL(command, "add_after") && num_of_args == 2) {
-		return InsertAfterElement(start, argument1, argument2);
+	else if (STRINGS_ARE_EQUAL(user_instruction->command, "add_after")) {
+		got_exit_indication = (bool)InsertAfterElement(start,
+							  user_instruction->argument_1,
+							  user_instruction->argument_2);
 	}
-	else if (STRINGS_ARE_EQUAL(command, "index") && num_of_args == 1) {
-		SearchForElement(*start, argument1, 1);
+	else if (STRINGS_ARE_EQUAL(user_instruction->command, "index")) {
+		SearchForElement(*start, user_instruction->argument_1, true);
 	}
-	else if (STRINGS_ARE_EQUAL(command, "del") && num_of_args == 1) {
-		return RemoveIndex(start, argument1);
+	else if (STRINGS_ARE_EQUAL(user_instruction->command, "del")) {
+		got_exit_indication = (bool)RemoveIndex(start, user_instruction->argument_1);
 	}
-	else if (STRINGS_ARE_EQUAL(command, "print") && num_of_args == 0) {
+	else if (STRINGS_ARE_EQUAL(user_instruction->command, "print")) {
 		PrintList(*start);
 	}
-	else if (STRINGS_ARE_EQUAL(command, "exit") && num_of_args == 0) {
-		return 1;
+	else if (STRINGS_ARE_EQUAL(user_instruction->command, "exit")) {
+		got_exit_indication = true;
 	}
 	else {
-		printf("Unrecognized command or invalid number of arguments requested\n");
+		printf("Unrecognized command\n");
 		UsageGuide();
 	}
-	return 0;
+	return got_exit_indication;
 }
 
 void ConvertToLowercase(char* str) {

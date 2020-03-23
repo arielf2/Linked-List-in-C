@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "LinkedList.h"
+
 
 #define ERROR_INDEX_NOT_FOUND -1
 #define SUCCESS 0
@@ -19,9 +21,11 @@
 
 void InitalizeLinkedList(Node** head, int value);
 
-int IsEmptyList(Node* head);
+bool IsEmptyList(Node* head);
 
 Node* CreateNewNode(int value);
+
+void PrintIndexIfFound(bool found, int index);
 
 
 void InitalizeLinkedList(Node** head, int value) {
@@ -31,19 +35,18 @@ void InitalizeLinkedList(Node** head, int value) {
 Node* CreateNewNode(int value) {
 
 	Node* new_node = (Node*)malloc(sizeof(Node));
-	if (new_node == NULL) {
-		exit(1);
-	}
+
 	new_node->value = value;
 	new_node->next_node = NULL;
 	return new_node;
 }
 
-int IsEmptyList(Node* head) {
-	if (NULL == head) return 1;
-	else return 0;
+bool IsEmptyList(Node* head) {
+	if (NULL == head) {
+		return true;
+	}
+	return false;
 }
-
 
 void InsertEndOfList(Node** head, int value) {
 
@@ -79,7 +82,7 @@ int InsertAfterElement(Node** head, int new_element, int element_before_new) {
 		Node* new_node = CreateNewNode(new_element);
 		new_node->next_node = current_node->next_node;
 		current_node->next_node = new_node;
-		return 0;
+		return SUCCESS;
 	}
 	else {
 		printf("Error: element %d not found\n", element_before_new);
@@ -88,12 +91,13 @@ int InsertAfterElement(Node** head, int new_element, int element_before_new) {
 	
 }
 
-Node* SearchForElement(Node* head, int value, int print_index) {
-	int found = 0, index = 0;
+Node* SearchForElement(Node* head, int value, bool print_index) {
+	int index = 0;
+	bool found = false;
 	Node* current_node = head;
 	while (current_node != NULL) {
 		if (current_node->value == value) {
-			found = 1;
+			found = true;
 			break;
 		}
 		current_node = current_node->next_node;
@@ -101,13 +105,25 @@ Node* SearchForElement(Node* head, int value, int print_index) {
 	}
 
 	if (print_index) {
-		if (found) printf("%d\n", index);
-		else printf("%d\n", ERROR_INDEX_NOT_FOUND);
+		PrintIndexIfFound(found, index);
 		return NULL;
 	}
 	else {
-		if (found) return current_node;
-		else return NULL;
+		if (found) {
+			return current_node;
+		}
+		else {
+			return NULL;
+		}
+	}
+}
+
+void PrintIndexIfFound (bool found, int index){
+	if (found) {
+		printf("%d\n", index);
+	}
+	else {
+		printf("%d\n", ERROR_INDEX_NOT_FOUND);
 	}
 }
 
@@ -128,13 +144,14 @@ void PrintList(Node* head) {
 
 int RemoveIndex(Node** head, int index_to_remove) {
 
-	int found = 0, index = 0;
+	int index = 0;
+	bool found = false;
 	Node* previous_node = NULL;
 	Node* current_node = *head;
 
 	while (current_node != NULL) {
 		if (index_to_remove == index) {
-			found = 1;
+			found = true;
 			break;
 		}
 		previous_node = current_node;
@@ -161,7 +178,7 @@ void TerminateList(Node* head)
 {
 	Node* temp_node_pointer;
 
-	while (head != NULL)
+	while (!IsEmptyList(head))
 	{
 		temp_node_pointer = head;
 		head = head->next_node;
